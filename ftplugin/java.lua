@@ -16,7 +16,7 @@ local bundles = {
 }
 
 -- vim.list_extend(bundles, vim.split(vim.fn.glob("/Users/rsnhn/.local/share/nvim/mason/packages/java-test/extension/server/*.jar", false), "\n"))
-vim.list_extend(bundles, vim.split(vim.fn.glob("/Users/rsnhn/vscode-java-test/server/*.jar", false), "\n"))
+vim.list_extend(bundles, vim.split(vim.fn.glob("/usr/local/share/vscode-java-test/server/*.jar", false), "\n"))
 -- printtable(bundles)
 
 cmp.setup {
@@ -62,6 +62,8 @@ local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
 local workspace_dir = '/Users/rsnhn/Projects/workspaces/' .. project_name
 
 local jdtls_path = '/usr/local/opt/jdtls/libexec/'
+local extendedClientCapabilities = require("jdtls").extendedClientCapabilities
+extendedClientCapabilities.resolveAdditionalTextEditsSupport = true
 
 local config = {
   cmd = {
@@ -71,12 +73,14 @@ local config = {
     '-Declipse.product=org.eclipse.jdt.ls.core.product',
     '-Dlog.protocol=true',
     '-Dlog.level=ALL',
+    "-javaagent:" .. "/Users/rsnhn/.m2/repository/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar",
     '-Xms1g',
     '--add-modules=ALL-SYSTEM',
     '--add-opens', 'java.base/java.util=ALL-UNNAMED',
     '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
 
-    '-jar', jdtls_path .. 'plugins/org.eclipse.equinox.launcher_1.6.600.v20231106-1826.jar',
+    '-jar', vim.fn.glob(jdtls_path .. 'plugins/org.eclipse.equinox.launcher_*.jar'),
+    -- jdtls_path .. 'plugins/org.eclipse.equinox.launcher_1.6.600.v20231106-1826.jar',
     '-configuration', jdtls_path .. 'config_mac',
 
     '-data', workspace_dir
@@ -85,11 +89,56 @@ local config = {
   settings = {
     java = {
       signatureHelp = { enabled = true },
+    },
+    eclipse = {
+      downloadSources = true,
+    },
+    maven = {
+      downloadSources = true,
+    },
+    implementationsCodeLens = {
+      enabled = true,
+    },
+    referencesCodeLens = {
+      enabled = true,
+    },
+    references = {
+      includeDecompiledSources = true,
+    },
+    inlayHints = {
+      parameterNames = {
+        enabled = "all", -- literals, all, none
+      },
+    },
+    completion = {
+      favoriteStaticMembers = {
+        "org.hamcrest.MatcherAssert.assertThat",
+        "org.hamcrest.Matchers.*",
+        "org.hamcrest.CoreMatchers.*",
+        "org.junit.jupiter.api.Assertions.*",
+        "java.util.Objects.requireNonNull",
+        "java.util.Objects.requireNonNullElse",
+        "org.mockito.Mockito.*",
+      },
+    },
+    sources = {
+      organizeImports = {
+        starThreshold = 9999,
+        staticStarThreshold = 9999,
+      },
+    },
+    codeGeneration = {
+      toString = {
+        template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}",
+      },
+      useBlocks = true,
     }
   },
+
   init_options = {
     bundles = bundles,
-  },
+    extendedClientCapabilities = extendedClientCapabilities
+  }
 }
 
 require('jdtls').setup_dap({ hotcodereplace = 'auto' })

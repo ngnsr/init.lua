@@ -22,7 +22,10 @@ vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
 vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
 
 -- own should work only with C/C++ but..
-vim.keymap.set("n", "<leader>r", "<Cmd>w | !ninja -C \'./build/\' <CR>", { desc = 'Write Compile [R]un' })
+vim.keymap.set("n", "<leader>r", "<Cmd>w | !ninja -C \'./build/\' | ./build/prog <CR>",
+	{ desc = 'Write Compile [R]un Ninja' })
+vim.keymap.set("n", "<leader>rm", "<Cmd>w | !make -C \'./build/\' | ./build/prog <CR>",
+	{ desc = 'Write Compile [R]un Make' })
 --
 
 vim.keymap.set("n", "<leader>so", "<Cmd>source $MYVIMRC<CR>", { desc = 'Source config' })
