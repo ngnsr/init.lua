@@ -2,7 +2,7 @@ local dap = require('dap')
 
 dap.adapters.lldb = {
 	type = 'executable',
-	command = '/usr/local/opt/llvm/bin/lldb-vscode',
+	command = '/usr/local/opt/llvm/bin/lldb-dap',
 	name = 'lldb'
 }
 
@@ -25,7 +25,6 @@ dap.configurations.cpp = {
 	}
 }
 
--- If you want to use this for Rust and C, add something like this:
 dap.configurations.c = dap.configurations.cpp
 
 dap.configurations.java = {
