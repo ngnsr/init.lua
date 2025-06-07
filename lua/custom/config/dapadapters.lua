@@ -16,7 +16,10 @@ dap.configurations.cpp = {
 		end,
 		cwd = '${workspaceFolder}',
 		-- stopOnEntry = false,
-		args = {},
+		args = { '-b', './res/input5.txt' },
+		-- args = function()
+		-- 	return vim.fn.input('Args: ')
+		-- end,
 		runInTerminal = true,
 		--      setupCommands = {
 		-- text = 'settings set target.input-path ' .. vim.fn.input('Path to stdin file: ', vim.fn.getcwd() .. '/', 'file')
@@ -26,23 +29,3 @@ dap.configurations.cpp = {
 }
 
 dap.configurations.c = dap.configurations.cpp
-
-dap.configurations.java = {
-	{
-		-- classPaths = { vim.fn.getcwd() },
-		-- projectName = function()
-		-- 	return vim.fn.input('Project name: ')
-		-- end,
-		javaExec = "/usr/bin/java",
-		args = function()
-			return vim.fn.input('Args: ')
-		end,
-		mainClass = function()
-			return vim.fn.input('Package main class name: ')
-		end,
-		-- modulePaths = {},
-		name = "Launch [package.name.Main]",
-		request = "launch",
-		type = "java"
-	},
-}

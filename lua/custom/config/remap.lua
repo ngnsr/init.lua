@@ -18,7 +18,6 @@ vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = tr
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]])
 vim.keymap.set("n", "<leader>Y", [["+Y]])
-vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
 vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
 
 -- own should work only with C/C++ but..
@@ -36,7 +35,7 @@ vim.keymap.set('n', '<Leader>b', ':lua require"dap".toggle_breakpoint(vim.fn.inp
 
 vim.keymap.set({ 'n', 'i' }, '<C-b>', "<Esc>:Lex<CR>:vertical resize 30<CR>")
 
-vim.keymap.set("n", "<leader>vpp", "<cmd>e /Users/rsnhn/.config/nvim/init.lua<CR>");
+vim.keymap.set("n", "<leader>vpp", "<cmd>e /Users/rr/.config/nvim/init.lua<CR>");
 vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
 vim.keymap.set("n", "<leader>so", vim.cmd("so"))
 

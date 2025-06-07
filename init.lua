@@ -44,6 +44,14 @@ P.S. You can delete this when you're done too. It's your config now :)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+local orig_notify = vim.notify
+vim.notify = function(msg, level, opts)
+  if msg:match("which%-key") and level == vim.log.levels.WARN then
+    return
+  end
+  orig_notify(msg, level, opts)
+end
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    https://github.com/folke/lazy.nvim
 --    `:help lazy.nvim.txt` for more info
@@ -208,12 +216,13 @@ require('lazy').setup({
     opts = {
       options = {
         icons_enabled = false,
-        theme = 'rose-pine-moon',
+        -- theme = 'rose-pine',
         component_separators = '|',
         section_separators = '',
       },
     },
   },
+
 
   {
     -- Add indentation guides even on blank lines
@@ -284,6 +293,11 @@ require("custom.config.set")
 
 
 require("custom.config.remap")
+
+-- Obsidian
+require('telekasten').setup({
+  home = vim.fn.expand("~/Documents/hell"), -- Put the name of your notes directory here
+})
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -385,7 +399,7 @@ vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = 
 vim.defer_fn(function()
   require('nvim-treesitter.configs').setup {
     -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'typescript', 'help', 'vim', 'bash', 'java' },
+    ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'typescript', 'vim', 'bash' },
     auto_install = true,
     sync_install = true,
     modules = {},
@@ -451,6 +465,16 @@ end, 0)
 -- [[ Configure LSP ]]
 --  This function gets run when an LSP connects to a particular buffer.
 local on_attach = function(_, bufnr)
+  vim.api.nvim_create_autocmd("InsertCharPre", {
+    buffer = bufnr,
+    callback = function(args)
+      if args.char == "(" then
+        vim.defer_fn(function()
+          vim.lsp.buf.signature_help()
+        end, 0)
+      end
+    end,
+  })
   -- NOTE: Remember that lua is a real programming language, and as such it is possible
   -- to define small helper and utility functions so you don't have to repeat yourself
   -- many times.
@@ -506,7 +530,7 @@ end
 -- }
 -- register which-key VISUAL mode
 -- required for visual <leader>hs (hunk stage) to work
-require('which-key').register({
+require('which-key').add({
   ['<leader>'] = { name = 'VISUAL <leader>' },
   ['<leader>h'] = { 'Git [H]unk' },
 }, { mode = 'v' })
@@ -532,15 +556,38 @@ local servers = {
   -- tsserver = {},
   -- html = { filetypes = { 'html', 'twig', 'hbs'} },
 
+  -- pgtools = {},
   lua_ls = {
-    Lua = {
-      workspace = { checkThirdParty = false },
-      telemetry = { enable = false },
-      -- NOTE: toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-      -- diagnostics = { disable = { 'missing-fields' } },
-    },
+    settings = {
+      Lua = {
+        runtime = {
+          version = 'LuaJIT',
+        },
+        diagnostics = {
+          globals = {
+            'vim',
+            'require'
+          },
+          disable = { 'missing-fields' },
+        },
+        workspace = {
+          library = vim.api.nvim_get_runtime_file("", true),
+        },
+        telemetry = {
+          enable = false,
+        },
+      },
+    }
   },
 }
+
+-- vim.lsp.config['postgrestools'] = {
+--   cmd = { "postgrestools", "lsp-proxy" },
+--   filetypes = { 'sql' },
+--   root_markers = { "postgrestools.jsonc" },
+--   -- settings = {}
+-- }
+vim.lsp.enable('postgres_lsp')
 
 -- Setup neovim lua configuration
 require('neodev').setup()
@@ -573,7 +620,7 @@ local cmp = require 'cmp'
 local luasnip = require 'luasnip'
 require('luasnip.loaders.from_vscode').lazy_load()
 luasnip.config.setup {
-  require("luasnip.loaders.from_vscode").lazy_load({ paths = { "/Users/rsnhn/.local/share/nvim/lazy/friendly-snippets" } }),
+  -- require("luasnip.loaders.from_vscode").lazy_load({ paths = { "/Users/rsnhn/.local/share/nvim/lazy/friendly-snippets" } }),
   -- require("luasnip.loaders.from_vscode").lazy_load({ paths = { "/Users/rsnhn/.local/share/nvim/lazy/friendly-snippets" }, exclude = { "latex" } }),
   -- -- will exclude all  snippets
   -- require("luasnip.loaders.from_vscode").load {

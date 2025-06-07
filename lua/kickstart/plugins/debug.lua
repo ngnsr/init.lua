@@ -19,8 +19,7 @@ return {
     'jay-babu/mason-nvim-dap.nvim',
 
     -- Add your own debuggers here
-    'leoluz/nvim-dap-go',
-    'microsoft/java-debug'
+    'leoluz/nvim-dap-go'
   },
   config = function()
     local dapui = require 'dapui'
@@ -39,7 +38,6 @@ return {
       ensure_installed = {
         -- Update this to ensure that you have the debuggers for the langs you want
         -- 'delve',
-        'javadbg'
       },
     }
 
